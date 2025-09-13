@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        
+        /* Chat bubble animation */
+        @keyframes bubbleIn {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .chat-bubble {
+            animation: bubbleIn 0.3s ease-out forwards;
+        }
+        
+        /* Typing indicator animation */
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .typing-dot {
+            animation: blink 1.5s infinite ease-in-out;
+        }
+        
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.3s;
+        }
+        
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+        
+        /* Gradient background */
+        .gradient-bg {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        
+        /* Sidebar transition */
+        .sidebar {
+            transition: all 0.3s ease;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                position: absolute;
+                left: -100%;
+                z-index: 20;
+                width: 80%;
+            }
+            .sidebar.open {
+                left: 0;
+            }
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0,0,0,0.5);
+                z-index: 10;
+            }
+            .sidebar-overlay.open {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body class="gradient-bg h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-white shadow-sm py-4 px-6 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <button id="sidebar-toggle" class="md:hidden text-gray-500 hover:text-gray-700">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center text-white">
+                <i class="fas fa-robot text-xl"></i>
+            </div>
+            <h1 class="text-xl font-semibold text-gray-800">AI Assistant</h1>
+        </div>
+        <div class="flex items-center space-x-4">
+            <button id="settings" class="text-gray-500 hover:text-gray-700">
+                <i class="fas fa-cog"></i>
+            </button>
+            <button id="darkmode" class="text-gray-500 hover:text-gray-700">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+    </header>
+
+        <!-- Tab Navigation -->
+        <div class="bg-white shadow-sm px-6 pt-2">
+            <nav class="flex space-x-4" id="tab-nav">
+                <button id="chat-tab" class="text-indigo-600 border-b-2 border-indigo-600 px-3 py-2 font-medium focus:outline-none">Chat</button>
+                <button id="results-tab" class="text-gray-600 hover:text-indigo-600 px-3 py-2 font-medium focus:outline-none">Results</button>
+            </nav>
+        </div>
+
+    <!-- Main content -->
+    <div class="flex flex-1 overflow-hidden">
+        <!-- Sidebar overlay (mobile only) -->
+        <div id="sidebar-overlay" class="sidebar-overlay"></div>
+        
+        <!-- Sidebar - Chat history -->
+        <div id="sidebar" class="sidebar bg-white w-64 border-r border-gray-200 flex flex-col">
+            <div class="p-4 border-b border-gray-200">
+                <button id="new-chat" class="w-full flex items-center justify-center space-x-2 bg-indigo-500 hover:bg-indigo-600 text-white py-2 px-4 rounded-lg transition">
+                    <i class="fas fa-plus"></i>
+                    <span>New Chat</span>
+                </button>
+            </div>
+            <div class="flex-1 overflow-y-auto">
+                <div class="p-4">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Today</h3>
+                    <div id="chat-history" class="space-y-1">
+                        <!-- Chat history items will be added here -->
+                    </div>
+                </div>
+                <!-- <div class="p-4 border-t border-gray-200">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Yesterday</h3>
+                    <div class="space-y-1">
+                        <button class="w-full text-left p-2 rounded hover:bg-gray-100 text-gray-700 truncate">
+                            How to build a website?
+                        </button>
+                        <button class="w-full text-left p-2 rounded hover:bg-gray-100 text-gray-700 truncate">
+                            Explain quantum computing
+                        </button>
+                    </div>
+                </div> -->
+            </div>
+            <div class="p-4 border-t border-gray-200">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
+                        <i class="fas fa-user text-gray-600"></i>
+                    </div>
+                    <span class="text-sm font-medium text-gray-700">User Account</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Chat container -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Chat Section -->
+            <div class="flex-1 overflow-y-auto p-4 space-y-4" id="chat-container">
+                <!-- Welcome message -->
+                <div class="chat-bubble max-w-3xl mx-auto">
+                    <div class="flex space-x-3">
+                        <div class="flex-shrink-0">
+                            <div class="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="bg-white p-4 rounded-lg shadow-sm">
+                                <p class="text-gray-800">Hello! I'm your AI assistant. How can I help you today?</p>
+                                <div class="mt-2 text-xs text-gray-500">
+                                    <span>AI Assistant</span>
+                                    <span class="mx-1">•</span>
+                                    <span>Just now</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Results Section (hidden by default) -->
+            <div class="flex-1 overflow-y-auto p-4" id="results-container" style="display:none;">
+              <div class="max-w-3xl mx-auto bg-white p-4 rounded-lg shadow-sm">
+                <h2 class="text-lg font-semibold mb-4">Results Table</h2>
+                <div class="overflow-x-auto">
+                  <table class="min-w-full divide-y divide-gray-200" id="results-table">
+                    <thead>
+                      <tr>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Column 1</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Column 2</th>
+                        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Column 3</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="px-4 py-2 text-sm text-gray-700">Value 1</td>
+                        <td class="px-4 py-2 text-sm text-gray-700">Value 2</td>
+                        <td class="px-4 py-2 text-sm text-gray-700">Value 3</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <!-- Input area -->
+            <div class="border-t border-gray-200 bg-white p-4">
+                <form id="chat-form" class="max-w-3xl mx-auto">
+                    <div class="relative">
+                        <textarea 
+                            id="user_input" 
+                            rows="1" 
+                            class="w-full border border-gray-300 rounded-lg py-3 px-4 pr-12 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none" 
+                            placeholder="Type your message here..."
+                            required
+                        ></textarea>
+                        <div class="absolute right-3 bottom-3 flex space-x-2">
+                            <button type="button" class="text-gray-500 hover:text-gray-700" onclick="document.getElementById('fileInput').click();">
+                                <i class="fas fa-paperclip"></i>
+                            </button>
+                            <input type="file" id="fileInput" class="hidden" onchange="document.getElementById('fileName').textContent = this.files.length ? this.files[0].name : '';" />
+                            <button type="submit" class="text-indigo-500 hover:text-indigo-700">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <label id="fileName" class="text-sm text-gray-500"></label>
+                    <div class="mt-2 text-xs text-gray-500 text-center">
+                        <p>AI Assistant may produce inaccurate information. Consider verifying important details.</p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Helper: Display CSV as HTML table in Results tab
+        function displayCSVInResultsTable(csvText) {
+            try {
+                console.log('Attempting to parse CSV with length:', csvText.length);
+                
+                // Check if content looks like HTML
+                if (csvText.trim().toLowerCase().startsWith('<!doctype') || csvText.trim().toLowerCase().startsWith('<html')) {
+                    throw new Error('Received HTML content instead of CSV');
+                }
+                
+                // Check if content is empty
+                if (!csvText.trim()) {
+                    throw new Error('Empty file content');
+                }
+                
+                // Simple CSV parsing - split by lines and commas
+                const lines = csvText.trim().split(/\r?\n/);
+                console.log('Found', lines.length, 'lines in CSV');
+                
+                if (lines.length === 0) {
+                    throw new Error('No data lines found in CSV');
+                }
+                
+                const rows = lines.map(line => {
+                    // Basic CSV parsing - handles simple cases
+                    const cells = [];
+                    let current = '';
+                    let inQuotes = false;
+                    
+                    for (let i = 0; i < line.length; i++) {
+                        const char = line[i];
+                        if (char === '"') {
+                            inQuotes = !inQuotes;
+                        } else if (char === ',' && !inQuotes) {
+                            cells.push(current.trim());
+                            current = '';
+                        } else {
+                            current += char;
+                        }
+                    }
+                    cells.push(current.trim());
+                    return cells;
+                });
+
+                const table = document.getElementById('results-table');
+                table.innerHTML = '';
+                
+                // Create header
+                if (rows.length > 0) {
+                    const thead = document.createElement('thead');
+                    const headRow = document.createElement('tr');
+                    rows[0].forEach(cell => {
+                        const th = document.createElement('th');
+                        th.className = 'px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase';
+                        th.textContent = cell.replace(/"/g, '');
+                        headRow.appendChild(th);
+                    });
+                    thead.appendChild(headRow);
+                    table.appendChild(thead);
+                }
+                
+                // Create body
+                if (rows.length > 1) {
+                    const tbody = document.createElement('tbody');
+                    for (let i = 1; i < rows.length; i++) {
+                        const tr = document.createElement('tr');
+                        rows[i].forEach(cell => {
+                            const td = document.createElement('td');
+                            td.className = 'px-4 py-2 text-sm text-gray-700';
+                            td.textContent = cell.replace(/"/g, '');
+                            tr.appendChild(td);
+                        });
+                        tbody.appendChild(tr);
+                    }
+                    table.appendChild(tbody);
+                } else {
+                    // Only headers, no data
+                    const tbody = document.createElement('tbody');
+                    const tr = document.createElement('tr');
+                    const td = document.createElement('td');
+                    td.className = 'px-4 py-2 text-sm text-gray-500 italic';
+                    td.colSpan = rows[0].length;
+                    td.textContent = 'No data rows found';
+                    tr.appendChild(td);
+                    tbody.appendChild(tr);
+                    table.appendChild(tbody);
+                }
+                
+                console.log('CSV parsed successfully, switching to Results tab');
+                // Switch to Results tab
+                document.getElementById('results-tab').click();
+            } catch (error) {
+                console.error('CSV parsing error:', error);
+                const table = document.getElementById('results-table');
+                table.innerHTML = `<tbody><tr><td class="px-4 py-2 text-sm text-red-500">Error parsing CSV file: ${error.message}</td></tr></tbody>`;
+                document.getElementById('results-tab').click();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatForm = document.getElementById('chat-form');
+            const messageInput = document.getElementById('user_input');
+            const chatContainer = document.getElementById('chat-container');
+            const chatHistory = document.getElementById('chat-history');
+            const newChatBtn = document.getElementById('new-chat');
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            const settingsBtn = document.getElementById('settings');
+            const darkModeBtn = document.getElementById('darkmode');
+            const fileInput = document.getElementById('fileInput'); // Assuming you have a file input in your form
+            //const darkModeEnabled = localStorage.getItem('darkMode') === 'true';
+
+            // Toggle dark mode
+                        // Tab switching logic
+                        const chatTab = document.getElementById('chat-tab');
+                        const resultsTab = document.getElementById('results-tab');
+                        const resultsContainer = document.getElementById('results-container');
+
+                        chatTab.addEventListener('click', function() {
+                            chatTab.classList.add('text-indigo-600', 'border-b-2', 'border-indigo-600');
+                            chatTab.classList.remove('text-gray-600');
+                            resultsTab.classList.remove('text-indigo-600', 'border-b-2', 'border-indigo-600');
+                            resultsTab.classList.add('text-gray-600');
+                            chatContainer.style.display = '';
+                            resultsContainer.style.display = 'none';
+                        });
+
+                        resultsTab.addEventListener('click', function() {
+                            resultsTab.classList.add('text-indigo-600', 'border-b-2', 'border-indigo-600');
+                            resultsTab.classList.remove('text-gray-600');
+                            chatTab.classList.remove('text-indigo-600', 'border-b-2', 'border-indigo-600');
+                            chatTab.classList.add('text-gray-600');
+                            chatContainer.style.display = 'none';
+                            resultsContainer.style.display = '';
+                        });
+            darkModeBtn.addEventListener('click', function() {
+                document.body.classList.toggle('dark');
+                if (document.body.classList.contains('dark')) {
+                    darkModeBtn.innerHTML = '<i class="fas fa-sun"></i>';
+                    //localStorage.setItem('darkMode', 'true');
+                } else {
+                    darkModeBtn.innerHTML = '<i class="fas fa-moon"></i>';
+                    //localStorage.setItem('darkMode', 'false');
+                }
+            });
+            // Redirect to settings page
+            settingsBtn.addEventListener('click', function() {
+                window.location.href = '/settings';
+            });
+
+            
+            let currentChatId = Date.now().toString();
+            let chats = {};
+            
+            // Initialize with a default chat
+            chats[currentChatId] = {
+                title: "New Chat",
+                messages: []
+            };
+
+            let previousChatId = new Date(Date.now() - 86400000).toString();
+            chats[previousChatId] = {
+                title: "Previous Chat",
+                messages: []
+            };
+            let old_messages = {{messages}};
+            
+            
+            if (old_messages) {
+                old_messages.forEach(msg => {
+
+                    if(chats[msg.chatId || previousChatId] === undefined){
+                        chats[msg.chatId || previousChatId] = {
+                            title: msg.user_request.length > 30 ? msg.user_request.substring(0, 30) + '...' : msg.user_request,
+                            messages: []
+                        };
+                    }
+                    chats[msg.chatId || previousChatId].messages.push({
+                        sender: 'user',
+                        text: msg.user_request,
+                        timestamp: msg.timestamp
+                    });
+                    chats[msg.chatId || previousChatId].messages.push({
+                        sender: 'ai',
+                        text: msg.final_text_response,
+                        timestamp: msg.timestamp,
+                        filename : msg.file_name || null
+                    });})
+            }
+            // Auto-resize textarea
+            messageInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+            
+            // Handle form submission
+            chatForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const message = messageInput.value.trim();
+                
+                if (message) {
+                    // Add user message
+                    addMessage(message, 'user');
+                    
+                    // Update chat history title if it's the first message
+                    if (chats[currentChatId].messages.length === 0) {
+                        chats[currentChatId].title = message.length > 30 ? message.substring(0, 30) + '...' : message;
+                        updateChatHistory();
+                    }
+                    
+                    // Add to chat history
+                    chats[currentChatId].messages.push({
+                        sender: 'user',
+                        text: message,
+                        timestamp: new Date()
+                    });
+                    
+                    messageInput.value = '';
+                    messageInput.style.height = 'auto';
+                    
+                    // Show typing indicator
+                    showTypingIndicator();
+                    // Simulate API call to talk2ns
+
+                    const formData = new FormData();
+                    formData.append("user_input", message);
+                    formData.append("current_chatId", currentChatId);
+                    const file = fileInput.files[0]|| null;
+                    if (file) {
+                         formData.append("file", file);  // only if user selected a file
+                     }
+                    //formData.append("file", ); // assuming <input type="file" id="fileInput" />
+
+                    fetch(window.location.href, {
+                        method: 'POST',
+                        body: formData  // No need to set Content-Type; browser sets it automatically with boundary
+                    })
+                    // fetch(`/talk2ns`, {
+                    //     method: 'POST',
+                    //     headers: {
+                    //         'Content-Type': 'application/x-www-form-urlencoded',
+                    //     },
+                    //     body: new URLSearchParams({
+                    //         user_input: message,
+                    //         current_chatId: currentChatId,
+                    //     })
+                    // })
+                    .then(response => response.json())
+                    .then(data => {
+                        removeTypingIndicator();
+                        const responseFromServer = data.message || "Sorry, I couldn't process your request.";
+
+                        addMessage(responseFromServer[0].final_text_response, 'ai', responseFromServer[0].file_name || null);
+                        chats[currentChatId].messages.push({
+                            sender: 'ai',
+                            text: responseFromServer[0].final_text_response,
+                            timestamp: new Date(),
+                            filename: responseFromServer[0].file_name || null
+                        });
+                        fileInput.value = '';
+                        document.getElementById('fileName').textContent = '';
+                        chatContainer.scrollTop = chatContainer.scrollHeight;
+
+                        // If file_name is present, fetch and display as HTML table in Results tab
+                        const filename = responseFromServer[0].file_name;
+                        if (filename) {
+                            console.log('Fetching file:', filename);
+                            // Try CSV file reader suitelet first, fallback to direct URL
+                            fetch(`/app/site/hosting/scriptlet.nl?script=870&deploy=1&fileid=${filename}`)
+                                .then(res => {
+                                    console.log('CSV suitelet response status:', res.status);
+                                    return res.text();
+                                })
+                                .then(fileText => {
+                                    console.log('CSV suitelet response content:', fileText.substring(0, 200) + '...');
+                                    // Check if response looks like HTML (starts with <!DOCTYPE or <html)
+                                    if (fileText.trim().toLowerCase().startsWith('<!doctype') || fileText.trim().toLowerCase().startsWith('<html')) {
+                                        console.log('Received HTML instead of CSV, trying direct URL');
+                                        throw new Error('HTML response received');
+                                    }
+                                    displayCSVInResultsTable(fileText);
+                                })
+                                .catch(err => {
+                                    console.error('CSV suitelet fetch error, trying direct URL:', err);
+                                    // Fallback to direct file URL
+                                    fetch(`/app/common/media/mediaitem.nl?id=${filename}`)
+                                        .then(res => {
+                                            console.log('Direct URL response status:', res.status);
+                                            return res.text();
+                                        })
+                                        .then(fileText => {
+                                            console.log('Direct URL response content:', fileText.substring(0, 200) + '...');
+                                            // Check if this is also HTML
+                                            if (fileText.trim().toLowerCase().startsWith('<!doctype') || fileText.trim().toLowerCase().startsWith('<html')) {
+                                                throw new Error('HTML response received from direct URL too');
+                                            }
+                                            displayCSVInResultsTable(fileText);
+                                        })
+                                        .catch(err2 => {
+                                            console.error('Direct CSV fetch error:', err2);
+                                            const table = document.getElementById('results-table');
+                                            table.innerHTML = '<tbody><tr><td class="px-4 py-2 text-sm text-red-500">Failed to load file or parse as table. File may not be a CSV or may not be accessible.</td></tr></tbody>';
+                                            document.getElementById('results-tab').click();
+                                        });
+                                });
+                        }
+                    })
+                    .catch(error => {
+                        removeTypingIndicator();
+                        console.error('Error:', error);
+                        addMessage("An error occurred while processing your request.", 'ai');
+                    });
+                }
+            });
+            
+            // New chat button
+            newChatBtn.addEventListener('click', function() {
+                // Clear current chat
+                chatContainer.innerHTML = '';
+                
+                // Create new chat
+                currentChatId = Date.now().toString();
+                chats[currentChatId] = {
+                    title: "New Chat",
+                    messages: []
+                };
+                
+                // Add welcome message
+                addMessage("Hello! I'm your AI assistant. How can I help you today?", 'ai');
+                
+                // Update chat history
+                updateChatHistory();
+                
+                // Close sidebar on mobile
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('open');
+                    sidebarOverlay.classList.remove('open');
+                }
+            });
+            
+            // Toggle sidebar on mobile
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('open');
+                sidebarOverlay.classList.toggle('open');
+            });
+            
+            // Close sidebar when clicking overlay
+            sidebarOverlay.addEventListener('click', function() {
+                sidebar.classList.remove('open');
+                sidebarOverlay.classList.remove('open');
+            });
+            
+            function addMessage(text, sender,filename=null, timestamp=null) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'chat-bubble max-w-3xl mx-auto';
+                
+                if (sender === 'user') {
+                    messageDiv.innerHTML = `
+                        <div class="flex space-x-3 justify-end">
+                            <div class="flex-1 min-w-0">
+                                <div class="bg-indigo-500 text-white p-4 rounded-lg shadow-sm">
+                                    <p>${text}</p>
+                                    <div class="mt-2 text-xs text-indigo-100">
+                                        <span>You</span>
+                                        <span class="mx-1">•</span>
+                                        <span>${timestamp ? new Date(timestamp).toLocaleString() : 'Just now'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <div class="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    messageDiv.innerHTML = `
+                        <div class="flex space-x-3">
+                            <div class="flex-shrink-0">
+                                <div class="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="bg-white p-4 rounded-lg shadow-sm">
+                                    <p class="text-gray-800">${text}</p>
+                                    ${filename ? `<a href="/app/site/hosting/scriptlet.nl?script=870&deploy=1&fileid=${filename}" class="text-indigo-500 hover:underline">Download File</a>` : ''}
+                                    <div class="mt-2 text-xs text-gray-500">
+                                        <span>AI Assistant</span>
+                                        <span class="mx-1">•</span>
+                                        <span>${timestamp ? new Date(timestamp).toLocaleString() : 'Just now'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                chatContainer.appendChild(messageDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+            
+            function showTypingIndicator() {
+                const typingDiv = document.createElement('div');
+                typingDiv.id = 'typing-indicator';
+                typingDiv.className = 'chat-bubble max-w-3xl mx-auto';
+                typingDiv.innerHTML = `
+                    <div class="flex space-x-3">
+                        <div class="flex-shrink-0">
+                            <div class="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="bg-white p-4 rounded-lg shadow-sm">
+                                <div class="flex space-x-1">
+                                    <div class="typing-dot w-2 h-2 rounded-full bg-gray-400"></div>
+                                    <div class="typing-dot w-2 h-2 rounded-full bg-gray-400"></div>
+                                    <div class="typing-dot w-2 h-2 rounded-full bg-gray-400"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                chatContainer.appendChild(typingDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+            
+            function removeTypingIndicator() {
+                const typingIndicator = document.getElementById('typing-indicator');
+                if (typingIndicator) {
+                    typingIndicator.remove();
+                }
+            }
+            
+            function updateChatHistory() {
+                chatHistory.innerHTML = '';
+                
+                // Add current chats
+                for (const chatId in chats) {
+
+                    const chat = chats[chatId];
+                    const chatBtn = document.createElement('button');
+                    chatBtn.className = `w-full text-left p-2 rounded hover:bg-gray-100 text-gray-700 truncate ${chatId === currentChatId ? 'bg-gray-100 font-medium' : ''}`;
+                    chatBtn.textContent = chat.title;
+                    chatBtn.addEventListener('click', function() {
+                        loadChat(chatId);
+                    });
+                    chatHistory.appendChild(chatBtn);
+                }
+            }
+            
+            function loadChat(chatId) {
+                currentChatId = chatId;
+                const chat = chats[chatId];
+                
+                // Clear current chat
+                chatContainer.innerHTML = '';
+                
+                // Load messages
+                chat.messages.forEach(msg => {
+                    addMessage(msg.text, msg.sender, msg.filename, msg.timestamp);
+                });
+                
+                // If no messages, add welcome message
+                if (chat.messages.length === 0) {
+                    addMessage("Hello! I'm your AI assistant. How can I help you today?", 'ai');
+                }
+                
+                // Update chat history
+                updateChatHistory();
+                
+                // Close sidebar on mobile
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('open');
+                    sidebarOverlay.classList.remove('open');
+                }
+            }
+            
+            // Initialize chat history
+            updateChatHistory();
+        });
+    </script>
+</body>
+</html>
