@@ -1,0 +1,8 @@
+**itemType**:Inventory Item Type Defines the primary classification for items (inventory, non-inventory, service). Determines fundamental item behavior and accounting treatment.
+- 'id' (VARCHAR2) ID
+- 'internalid' (BIGINT) Internal ID
+- 'name' (VARCHAR2) Name
+- 'resalable' (CHAR) Resalable
+- 'sequence' (BIGINT) Sequence
+
+[{"name":"Service","id":"Service"},{"name":"Non-inventory Item","id":"NonInvtPart"},{"name":"Description","id":"Description"},{"name":"Sales Tax Item","id":"TaxItem"},{"name":"Expense","id":"Expense"},{"name":"Markup","id":"Markup"},{"name":"Payment","id":"Payment"},{"name":"Assembly/Bill of Materials","id":"Assembly"},{"name":"Discount","id":"Discount"},{"name":"Item Group","id":"Group"},{"name":"Gift Certificate","id":"GiftCert"},{"name":"Subscription Plan","id":"SubscriPlan"},{"name":"Kit/Package","id":"Kit"},{"name":"Shipping Cost Item","id":"ShipItem"},{"name":"End of Item Group","id":"EndGroup"},{"name":"Download Item","id":"DwnLdItem"},{"name":"Other Charge","id":"OthCharge"},{"name":"Subtotal","id":"Subtotal"},{"name":"Sales Tax Group","id":"TaxGroup"},{"name":"Inventory Item","id":"InvtPart"}]

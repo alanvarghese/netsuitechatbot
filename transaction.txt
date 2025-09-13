@@ -1,0 +1,174 @@
+**transaction**:Transaction Represents all financial and operational business activities in the system. These form the core records of enterprise activity. For amount use foreigntotal
+- 'abbrevtype' (VARCHAR2) Abbrev. Type
+- 'accountbasednumber' (VARCHAR2) Account Based Number
+- 'actualproductionenddate' (TIMESTAMP) Actual Production End Date
+- 'actualproductionstartdate' (TIMESTAMP) Actual Production Start Date
+- 'actualshipdate' (TIMESTAMP) Actual Shipping Date
+- 'altsalestotal' (DOUBLE) Alt. Sales Total
+- 'amountunbilled' (DOUBLE) Amount (Unbilled Receivable)
+- 'applypickdecomposition' (VARCHAR2) Apply Pick Decomposition
+- 'approvalstatus' (BIGINT) Approval Status
+- 'balsegstatus' (BIGINT) Balanced by Segments
+- 'billingaddress' (BIGINT) Billing Address
+- 'billingstatus' (VARCHAR2) Billing Status
+- 'billofmaterials' (BIGINT) Bill of Materials
+- 'billofmaterialsrevision' (BIGINT) Bill of Materials Revision
+- 'bulkprocsubmission' (BIGINT) Bulk Processing Submission
+- 'closedate' (TIMESTAMP) Date Closed
+- 'committed' (DOUBLE) Buildable
+- 'completeddatetime' (TIMESTAMP) Completed Date Time
+- 'couponcode' (BIGINT) Coupon Code
+- 'createdby' (BIGINT) Created By
+- 'createddate' (TIMESTAMP) Date Created
+- 'currency' (BIGINT) Currency
+- 'customform' (BIGINT) Custom Form
+- 'customtype' (BIGINT) Custom Type
+- 'daysopen' (BIGINT) Days Open
+- 'daysoverduesearch' (BIGINT) Days Overdue
+- 'discountdate' (TIMESTAMP) Discount Date
+- 'duedate' (TIMESTAMP) Due Date
+- 'email' (VARCHAR2) Email
+- 'employee' (BIGINT) Sales Rep
+- 'enddate' (TIMESTAMP) End Date
+- 'entity' (BIGINT) Entity
+- 'entitystatus' (BIGINT) Status (Customer)
+- 'estgrossprofit' (DOUBLE) Est. Gross Profit
+- 'estgrossprofitpercent' (DOUBLE) Est. Gross Profit Percent
+- 'exchangerate' (DOUBLE) Exchange Rate
+- 'expectedclosedate' (TIMESTAMP) Expected Close Date
+- 'externalid' (VARCHAR2) External ID
+- 'fax' (VARCHAR2) Fax
+- 'firmed' (CHAR) Firmed
+- 'fob' (VARCHAR2) FOB
+- 'forecasttype' (BIGINT) Forecast Type
+- 'foreignamountpaid' (DOUBLE) Amount Paid (Transaction Currency)
+- 'foreignamountpaidnopost' (DOUBLE) Amount Paid (Non-Posted) (Transaction Currency)
+- 'foreignamountunpaid' (DOUBLE) Amount Unpaid (Transaction Currency)
+- 'foreignpaymentamountunused' (DOUBLE) Payment Amount Unused (Transaction Currency)
+- 'foreignpaymentamountused' (DOUBLE) Payment Amount Used (Transaction Currency)
+- 'foreignpaymentamountusednopost' (DOUBLE) Payment Amount Used (Non-Posted) (Transaction Currency)
+- 'foreigntotal' (DOUBLE) Total Amount (Transaction Currency)
+- 'fulfillmenttype' (BIGINT) Fulfillment Type
+- 'fxaltsalestotal' (DOUBLE) Foreign Alt. Sales Total
+- 'fxnetaltsalestotal' (DOUBLE) Foreign Net Alt. Sales Total
+- 'id' (BIGINT) Internal ID
+- 'incoterm' (BIGINT) Incoterm
+- 'intercoadj' (VARCHAR2) Is Intercompany Adjustment
+- 'intercostatus' (BIGINT) Intercompany Status
+- 'intercotransaction' (BIGINT) Paired Intercompany Transaction
+- 'isactualprodenddateenteredmanually' (VARCHAR2) Enter Manually
+- 'isactualprodstartdateenteredmanually' (VARCHAR2) Enter Manually
+- 'isfinchrg' (CHAR) Finance Charge
+- 'isreversal' (VARCHAR2) Is Reversal
+- 'journaltype' (VARCHAR2) Journal Type
+- 'lastmodifiedby' (BIGINT) Last Modified By
+- 'lastmodifieddate' (TIMESTAMP) Date Last Modified
+- 'linkedinventorytransfer' (BIGINT) Inventory Transfer
+- 'linkedir' (BIGINT) Item Receipt
+- 'linkedpo' (BIGINT) Purchase Order
+- 'linkedtrackingnumberlist' (VARCHAR2) Linked Tracking Numbers
+- 'memdoc' (BIGINT) Memorized Transaction Definition
+- 'memo' (VARCHAR2) Memo
+- 'memorized' (CHAR) Memorized
+- 'message' (VARCHAR2) Message
+- 'needsbill' (CHAR) Needs Bill
+- 'netaltsalestotal' (DOUBLE) Net Alt. Sales Total
+- 'nextapprover' (BIGINT) Next Approver
+- 'nextbilldate' (TIMESTAMP) Next Bill Date
+- 'nexus' (BIGINT) Nexus
+- 'number' (BIGINT) Document Number
+- 'ordpicked' (VARCHAR2) Picked
+- 'ordreceived' (VARCHAR2) Order Received
+- 'otherrefnum' (VARCHAR2) PO/Check Number
+- 'outsourced' (VARCHAR2) Outsourced
+- 'outsourcingcharge' (BIGINT) Outsourcing Charge
+- 'outsourcingchargeunitprice' (DOUBLE) Unit Price
+- 'parentexpensealloc' (BIGINT) Source Allocation Schedule
+- 'paymenthold' (CHAR) Payment Hold
+- 'paymentmethod' (BIGINT) Payment Method
+- 'paymentoption' (BIGINT) Payment Option
+- 'posting' (VARCHAR2) Posting
+- 'postingperiod' (BIGINT) Posting Period
+- 'prevdate' (TIMESTAMP) Previous Effective Date
+- 'printedpickingticket' (CHAR) Printed Picking Ticket
+- 'probability' (DOUBLE) Probability (%)
+- 'promotioncombinations' (VARCHAR2) Promotion Combinations
+- 'recordtype' (VARCHAR2) Record Type
+- 'releaseddatetime' (TIMESTAMP) Released Date Time
+- 'reversal' (BIGINT) Reversal Doc
+- 'reversaldate' (TIMESTAMP) Reversal Date
+- 'reversaldefer' (VARCHAR2) Defer Entry
+- 'shipcarrier' (VARCHAR2) Shipping Carrier
+- 'shipcomplete' (CHAR) Ship Complete
+- 'shipdate' (TIMESTAMP) Ship Date
+- 'shipmethod' (BIGINT) Ship Via
+- 'shippingaddress' (BIGINT) Shipping Address
+- 'source' (VARCHAR2) Source
+- 'sourcetransaction' (BIGINT) Source Transaction
+- 'startdate' (TIMESTAMP) Start Date
+- 'status' (CHAR) Status
+- 'terms' (BIGINT) Terms
+- 'title' (VARCHAR2) Title
+- 'tobeprinted' (CHAR) To Be Printed
+- 'tosubsidiary' (BIGINT) To Subsidiary
+- 'totalcostestimate' (DOUBLE) Est. Cost
+- 'trackingnumberlist' (VARCHAR2) Tracking Numbers
+- 'trandate' (TIMESTAMP) Date
+- 'trandisplayname' (VARCHAR2) Transaction
+- 'tranid' (VARCHAR2) Document Number/ID
+- 'transactionnumber' (VARCHAR2) Transaction Number
+- 'transferlocation' (BIGINT) Destination Location
+- 'type' (VARCHAR2) Transaction type 'SalesOrd':Sales Order, 'PurchOrd':Purchase Order, 'CustInvc':Invoice, 'CustPymt':Customer Payment, 'ItemShip':Item Fulfillment, 'ItemRcpt':Item Receipt, 'Estimate':Estimate, 'Opprtnty':Opportunity. 
+- 'typebaseddocumentnumber' (VARCHAR2) Type Based Document Number
+- 'useitemcostastransfercost' (VARCHAR2) Use Item Cost As Transfer Cost
+- 'userevenuearrangement' (CHAR) Generates Revenue Arrangement
+- 'vendor' (BIGINT) Vendor
+- 'visibletocustomer' (CHAR) Available In Customer Center
+- 'void' (VARCHAR2) Void
+- 'voided' (CHAR) Voided
+- 'website' (BIGINT) Website
+
+
+ **TransactionStatus**: Represents the status of the transaction.
+- 'id' (CHAR(1)): Unique identifier for each transaction status. refers to the 'status' field in the transaction table.
+- 'trantype' (VARCHAR2): Type of the transaction. refers to the 'type' field in the transaction table.
+- 'name' (VARCHAR2): Name of the transaction status. 'Open', 'Closed, 'Voided', etc..
+- 'fullname' (VARCHAR2): Description of the transaction status.
+
+                ### Example Query:
+
+                To retrieve all the sales orders and the items ordered in the system. Return just the sales order number, date, item name, rate and quantity, amount and the customer name:
+
+                '''sql
+                SELECT t.tranId AS "Sales Order Number", 
+                    t.trandate AS "Sales Order Date", 
+                    e.entityid AS "Customer Name", 
+                    itm.itemid AS "Item Name", 
+                    tl.quantity AS "Quantity", 
+                    tl.rate AS "Rate", 
+                    tl.amount AS "Item Amount"
+                FROM entity e, transaction t, transactionLine tl, item itm
+                WHERE t.type = 'SalesOrd'
+                AND e.id = t.entity
+                AND t.id = tl.id
+                AND tl.item = itm.id
+                '''
+  ### Example Query: Retrieve a count of all the open invoices associated with Customer number 'Cust1853':
+        '''sql
+        SELECT COUNT(t.id) AS open_invoices
+        FROM transaction t, entity e , transactionstatus ts
+        WHERE  t.entity = e.id 
+        and t.status = ts.id 
+        and e.entityid = 'Cust1853'
+          AND t.type = 'CustInvc'
+        AND t.type = ts.trantype
+        AND ts.name = 'Open'
+        '''
+### Example Query: Retrieve a count of all the purchase orders that are  'Pending Receipt'
+"sql
+SELECT t.tranid AS "Purchase Order Number", t.trandate AS "Order Date", e.entityid AS "Vendor Name", t.foreigntotal AS "Total Amount", t.status AS "Status" FROM transaction t INNER JOIN entity e ON t.entity = e.id INNER JOIN transactionstatus ts ON t.status = ts.id WHERE t.type = 'PurchOrd' AND ts.name = 'Pending Receipt' and ts.trantype = 'PurchOrd'
+"
+
+### Example Query
+retrieve a count of Journals pending approval
+SELECT COUNT(t.id) AS pending_journals  FROM transaction t, transactionstatus ts WHERE type = 'Journal' and ts.id = t.status and ts.trantype = t.type and ts.name = 'Pending Approval'
