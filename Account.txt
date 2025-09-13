@@ -1,0 +1,38 @@
+**Account**:Account Represents general ledger accounts used for classifying financial activity, including 'Bank', 'Accounts Receivable', 'Accounts Payable', 'Fixed Asset', 'Expense', 'Income', 'Equity', 'Cost of Goods Sold', 'Credit Card', 'Deferred Revenue'. Accounts are fundamental to the General Ledger (GL) and are used to track financial transactions in NetSuite.
+- 'accountsearchdisplayname' (VARCHAR2) Display Name
+- 'accountsearchdisplaynamecopy' (VARCHAR2) Name
+- 'acctnumber' (VARCHAR2) Number
+- 'accttype' (VARCHAR2) Type
+- 'billableexpensesacct' (BIGINT) Track Billable Expenses in
+- 'cashflowrate' (VARCHAR2) Cash Flow Rate Type
+- 'category1099misc' (BIGINT) 1099-MISC Category
+- 'class' (BIGINT) Restrict to Class
+- 'currency' (BIGINT) Currency
+- 'custrecord_authorized_employee_list' (VARCHAR2) AUTHORIZED EMPLOYEE LIST
+- 'custrecord_cps_bdc_lastupdatedbyimp_acc' (CHAR) Bill.com Last Updated By Import
+- 'custrecord_not_used_in_je' (CHAR) DO NOT USE IN JE TRANSACTION TYPE
+- 'custrecord_sdj_lc_act' (CHAR) Landed Cost Account
+- 'deferralacct' (BIGINT) Deferral Account
+- 'department' (BIGINT) Restrict to Department
+- 'description' (VARCHAR2) Description
+- 'displaynamewithhierarchy' (VARCHAR2) Display Name (with hierarchy)
+- 'eliminate' (CHAR) Eliminate Intercompany Transactions
+- 'externalid' (VARCHAR2) External ID
+- 'fullname' (VARCHAR2) Full Name
+- 'generalrate' (VARCHAR2) General Rate Type
+- 'id' (BIGINT) Internal ID
+- 'includechildren' (VARCHAR2) Include Children
+- 'inventory' (CHAR) Inventory
+- 'isinactive' (CHAR) Inactive
+- 'issummary' (CHAR) Summary
+- 'lastmodifieddate' (TIMESTAMP) Last Modified Date
+- 'location' (BIGINT) Restrict to Location
+- 'parent' (BIGINT) Subaccount of
+- 'reconcilewithmatching' (CHAR) Use Match Bank Data and Reconcile Account Statement Pages
+- 'revalue' (CHAR) Revalue Open Balance for Foreign Currency Transactions
+- 'sbankname' (VARCHAR2) Bank Name
+- 'sbankroutingnumber' (VARCHAR2) Bank Routing Number
+- 'sspecacct' (VARCHAR2) Special Account Type
+- 'subsidiary' (VARCHAR2) Subsidiaries
+- 'unit' (BIGINT) Default Unit
+- 'unitstype' (BIGINT) Unit Type
